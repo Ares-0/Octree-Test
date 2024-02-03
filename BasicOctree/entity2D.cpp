@@ -3,8 +3,14 @@
 #include <iostream> // header in standard library
 #include <string>
 
-using namespace ETwo;
 using namespace std;
+
+entity2D::entity2D()
+{
+	xpos = 0;
+	ypos = 0;
+	radius = 0;
+}
 
 entity2D::entity2D(int x0, int y0, int radius0)
 {

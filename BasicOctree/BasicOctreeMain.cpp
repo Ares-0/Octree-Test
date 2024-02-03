@@ -7,18 +7,12 @@
 #include "quadtree.h"
 #include "entity2D.h"
 
-// surely this is awful practice
-using namespace N;
-using namespace OT;
-using namespace QT;
-using namespace ETwo;
-
 int main()
 {
     std::cout << "Hello World!\n";
     
-    //my_class mc;
-    //mc.do_something();
+    // my_class mc;
+    // mc.do_something();
 
     //octree tree;
     //tree.hello_world();
@@ -26,12 +20,19 @@ int main()
     //quadtree qtree;
     quadtree qtree(5, 5, 5);
     qtree.hello_world();
-    std::cout << qtree.to_string();
+    // std::cout << qtree.to_string();
 
     std::cout << "\n\n\n\n";
 
-    // entity2D alpha(1, 2, 3);
-    // std::cout << alpha.to_string();
+    entity2D alpha(8, 9, 2);
+    entity2D betah(7, 1, 2);
+    entity2D gamma(2, 1, 2);
+    entity2D delta(3, 6, 2);
+    
+    qtree.add_entity(alpha);
+    qtree.add_entity(betah);
+    qtree.add_entity(gamma);
+    qtree.add_entity(delta);
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
