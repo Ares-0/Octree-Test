@@ -68,10 +68,12 @@ bool quadtree::isleaf()
 
 // Add an entity to the tree where appropriate
 // Rebalance tree if need be
-void quadtree::add_entity(entity2D ent)
+// 
+// return: bool indicating success
+bool quadtree::add_entity(entity2D ent)
 {
 	// what if point already exists?
-	// cout << ent.to_string() << endl;
+    // cout << "adding " << ent.to_json() << " to tree..." << endl;
 
 	// figure out in what quadrant the child should go
 	int quad = get_quadrant(ent);
@@ -82,9 +84,11 @@ void quadtree::add_entity(entity2D ent)
 	{
 		// create a new tree aka leaf
 		quadtree* new_leaf = new_subtree(quad);
+		if (new_leaf == nullptr)
+			return false;
 		new_leaf->set_data(ent);
 		*quad_ptr = new_leaf;
-		return;
+		return true;
 	}
 
 	// case 2: the entity goes in a spot that has a child tree already
@@ -93,7 +97,7 @@ void quadtree::add_entity(entity2D ent)
 	{
 		// just move down the tree
 		(**quad_ptr).add_entity(ent);
-		return;
+		return true;
 	}
 	 
 	// case 3: the entity goes in a spot that has an entity already
@@ -109,10 +113,10 @@ void quadtree::add_entity(entity2D ent)
 		// I think I need to delete olddata now
 		 
 		// add newent to child (recursive)
-		(**quad_ptr).add_entity(ent);
+		return (**quad_ptr).add_entity(ent);
 	}
 	
-	return;
+	return false;
 }
 
 // Does the work of creating a new quadtree that covers one of the four quadrants of this
@@ -120,9 +124,14 @@ void quadtree::add_entity(entity2D ent)
 // also no data, fill that in elsewhere afterwards
 //
 // quad: int representing quad of new tree
-// return: new quadtree with correct coordinates
+// return: new quadtree with correct coordinates or null if error
 quadtree* quadtree::new_subtree(int quad)
 {
+	// until I can make a system that can handle this, radius 1 quads cannot be split
+	if (radius <= 1)
+	{
+		return nullptr;
+	}
 	// TODO: validate all this integer math. Its proobably close enough
 	int x_shift[] = { 1, 1, -1, -1 };
 	int dx = xpos + (radius / 2) * x_shift[quad];
@@ -131,6 +140,7 @@ quadtree* quadtree::new_subtree(int quad)
 	int dy = ypos + (radius / 2) * y_shift[quad];
 
 	quadtree* new_leaf = new quadtree(dx, dy, radius / 2);
+	cout << "making new leaf at " << dx << ", " << dy << ", " << (radius / 2) << endl;
 	return new_leaf;
 }
 

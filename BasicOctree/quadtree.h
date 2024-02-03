@@ -8,7 +8,7 @@ class quadtree
 {
 public:
 	void hello_world();
-	void add_entity(entity2D ent);
+	bool add_entity(entity2D ent);
 		
 	std::string to_string();
 	std::string to_json();

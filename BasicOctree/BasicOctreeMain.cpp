@@ -7,6 +7,8 @@
 #include "quadtree.h"
 #include "entity2D.h"
 
+void add_random_ent(quadtree *tree);
+
 int main()
 {
     std::cout << "Hello World!\n\n";
@@ -18,25 +20,35 @@ int main()
     //tree.hello_world();
 
     //quadtree qtree;
-    quadtree qtree(50, 50, 50);
-    // qtree.hello_world();
+    quadtree qtree(500, 500, 500); // 0 to 1000
 
-    entity2D alpha(80, 90, 2);
-    //entity2D betah(7, 1, 2);
-    //entity2D gamma(2, 1, 2);
-    //entity2D delta(3, 6, 2);
-    entity2D epsil(60, 70, 1);
-    
+    entity2D alpha(40, 70, 2);
+    entity2D betah(40, 71, 2);
     qtree.add_entity(alpha);
-    //qtree.add_entity(betah);
-    //qtree.add_entity(gamma);
-    //qtree.add_entity(delta);
-    std::cout << qtree.to_json() << std::endl;
-    
-    qtree.add_entity(epsil);
-    std::cout << qtree.to_json() << std::endl;
+    bool last = qtree.add_entity(betah);
+    if (not last)
+        std::cout << "failed to add " << betah.to_json() << " to tree..." << std::endl;
+    for (int i = 0; i < 10; i++)
+    {
+        //add_random_ent(&qtree);
+    }
+
+    std::cout << std::endl << qtree.to_json() << std::endl;
 
     std::cout << "\n\n\n\n";
+}
+
+void add_random_ent(quadtree *qtree)
+{
+    int rx = rand() % 1000;
+    int ry = rand() % 1000;
+    entity2D* ent = new entity2D(rx, ry, 1);
+    std::cout << "adding " << ent->to_json() << " to tree..." << std::endl;
+    bool last = qtree->add_entity(*ent);
+    if (not last)
+    {
+        std::cout << "failed to add " << ent->to_json() << " to tree..." << std::endl;
+    }
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
