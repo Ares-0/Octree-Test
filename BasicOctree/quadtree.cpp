@@ -39,6 +39,7 @@ quadtree::quadtree(int x0, int y0, int radius0)
 // This constructor is used when creating a new leaf
 quadtree::quadtree(int x0, int y0, int rad, entity2D ent)
 {
+	// std::vector<quadtree*>* children = new vector<quadtree*>(4);
 	children = vector<quadtree*>(4);
 	data = &ent;
 	leaf = true;
@@ -86,8 +87,10 @@ void quadtree::add_entity(entity2D ent)
 		int y_shift[] = { 1, -1, -1, 1 };
 		int dy = ypos + (radius / 2) * y_shift[quad];
 
-		quadtree new_leaf = quadtree(dx, dy, radius/2, ent);
-		*quad_ptr = &new_leaf;
+		quadtree *new_leaf = new quadtree(dx, dy, radius/2, ent);
+		*quad_ptr = new_leaf;
+		//quadtree new_leaf = quadtree(dx, dy, radius / 2, ent);
+		//*quad_ptr = &new_leaf;
 		return;
 	}
 
@@ -204,7 +207,11 @@ std::string quadtree::to_json()
 		}
 		else if (children[i] != nullptr)
 		{
-			last = last + (*children[i]).to_json();
+			last = last + "\"child\": " + (*children[i]).to_json() + ",";
+		}
+		else
+		{
+			last = last + "\"child\": NULL,";
 		}
 	}
 
