@@ -20,7 +20,11 @@ int main()
     //tree.hello_world();
 
     //quadtree qtree;
-    quadtree qtree(500, 500, 500); // 0 to 1000
+    quadtree qtree(512, 512, 512); // 0 to 1024
+    // theres some edge cases where small boxes can fail to correctly hold an object
+    // I think the solution is to either change the coords to floats
+    // or drop the radius system for an extent system
+    // sticking to multiples of 2 should kick the can for a bit
 
     entity2D alpha(40, 70, 2);
     entity2D betah(40, 71, 2);

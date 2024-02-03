@@ -128,19 +128,21 @@ bool quadtree::add_entity(entity2D ent)
 quadtree* quadtree::new_subtree(int quad)
 {
 	// until I can make a system that can handle this, radius 1 quads cannot be split
-	if (radius <= 1)
+	// update radius 1 quads CAN be split, but they HAVE to be leaves
+	if (radius <= 0)
 	{
 		return nullptr;
 	}
 	// TODO: validate all this integer math. Its proobably close enough
+	// update it was NOT close enough
 	int x_shift[] = { 1, 1, -1, -1 };
-	int dx = xpos + (radius / 2) * x_shift[quad];
+	int dx = xpos + round(radius / 2) * x_shift[quad];
 
 	int y_shift[] = { 1, -1, -1, 1 };
-	int dy = ypos + (radius / 2) * y_shift[quad];
+	int dy = ypos + round(radius / 2) * y_shift[quad];
 
 	quadtree* new_leaf = new quadtree(dx, dy, radius / 2);
-	cout << "making new leaf at " << dx << ", " << dy << ", " << (radius / 2) << endl;
+	// cout << "making new leaf at " << dx << ", " << dy << ", " << (radius / 2) << endl;
 	return new_leaf;
 }
 
@@ -265,6 +267,6 @@ std::string quadtree::to_json()
 		}
 	}
 
-	std::string closers = "}\n";
+	std::string closers = "}";
 	return last + closers;
 }
