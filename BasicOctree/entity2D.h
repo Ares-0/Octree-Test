@@ -12,4 +12,5 @@ public:
     int radius;
     std::string to_string();
     std::string to_json();
+    entity2D* copy();
 };

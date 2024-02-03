@@ -19,6 +19,13 @@ entity2D::entity2D(int x0, int y0, int radius0)
 	radius = radius0;
 }
 
+// return a new copy of self
+entity2D* entity2D::copy()
+{
+	entity2D* new_copy = new entity2D(xpos, ypos, radius);
+	return new_copy;
+}
+
 std::string entity2D::to_string()
 {
 	string last = "Entity 2D: \n";

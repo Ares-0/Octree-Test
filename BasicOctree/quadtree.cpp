@@ -41,7 +41,7 @@ quadtree::quadtree(int x0, int y0, int rad, entity2D ent)
 {
 	// std::vector<quadtree*>* children = new vector<quadtree*>(4);
 	children = vector<quadtree*>(4);
-	data = &ent;
+	data = ent.copy();
 	leaf = true;
 
 	xpos = x0;
@@ -51,6 +51,7 @@ quadtree::quadtree(int x0, int y0, int rad, entity2D ent)
 
 quadtree::~quadtree()
 {
+	// TODO: free data
 	cout << "destroying!" << xpos << ypos << radius << endl;
 }
 
@@ -89,8 +90,6 @@ void quadtree::add_entity(entity2D ent)
 
 		quadtree *new_leaf = new quadtree(dx, dy, radius/2, ent);
 		*quad_ptr = new_leaf;
-		//quadtree new_leaf = quadtree(dx, dy, radius / 2, ent);
-		//*quad_ptr = &new_leaf;
 		return;
 	}
 

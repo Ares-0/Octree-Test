@@ -9,7 +9,7 @@
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    std::cout << "Hello World!\n\n";
     
     // my_class mc;
     // mc.do_something();
@@ -20,27 +20,20 @@ int main()
     //quadtree qtree;
     quadtree qtree(5, 5, 5);
     // qtree.hello_world();
-    // std::cout << qtree.to_string() << std::endl;
 
-    std::cout << "\n\n\n\n";
-
-    entity2D *alpha = new entity2D(8, 9, 2);
-    // entity2D alpha(8, 9, 2);
+    entity2D alpha(8, 9, 2);
     entity2D betah(7, 1, 2);
     entity2D gamma(2, 1, 2);
     entity2D delta(3, 6, 2);
     
-    qtree.add_entity(*alpha);
-    std::cout << qtree.to_json();
-
+    qtree.add_entity(alpha);
     qtree.add_entity(betah);
-    std::cout << qtree.to_json();
-
     qtree.add_entity(gamma);
+    qtree.add_entity(delta);
+
     std::cout << qtree.to_json();
 
-    qtree.add_entity(delta);
-    std::cout << qtree.to_json();
+    std::cout << "\n\n\n\n";
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
