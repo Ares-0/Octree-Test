@@ -26,3 +26,13 @@ std::string entity2D::to_string()
 	last = last + "r: " + std::to_string(radius) + "\n";
 	return last;
 }
+
+std::string entity2D::to_json()
+{
+	string last = "{";
+	last = last + "\"x\": " + std::to_string(xpos) + ",";
+	last = last + "\"y\": " + std::to_string(ypos) + ",";
+	last = last + "\"r\": " + std::to_string(radius) + ",";
+	string closer = "}";
+	return last + closer;
+}

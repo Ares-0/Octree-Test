@@ -11,4 +11,5 @@ public:
     int ypos;
     int radius;
     std::string to_string();
+    std::string to_json();
 };

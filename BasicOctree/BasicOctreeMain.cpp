@@ -19,20 +19,25 @@ int main()
 
     //quadtree qtree;
     quadtree qtree(5, 5, 5);
-    qtree.hello_world();
-    // std::cout << qtree.to_string();
+    // qtree.hello_world();
+    // std::cout << qtree.to_string() << std::endl;
 
     std::cout << "\n\n\n\n";
 
+    // entity2D *alpha = new entity2D(8, 9, 2);
     entity2D alpha(8, 9, 2);
     entity2D betah(7, 1, 2);
     entity2D gamma(2, 1, 2);
     entity2D delta(3, 6, 2);
+
+    std::cout << qtree.to_json();
     
     qtree.add_entity(alpha);
-    qtree.add_entity(betah);
-    qtree.add_entity(gamma);
-    qtree.add_entity(delta);
+    //qtree.add_entity(betah);
+    //qtree.add_entity(gamma);
+    //qtree.add_entity(delta);
+
+    std::cout << qtree.to_json();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

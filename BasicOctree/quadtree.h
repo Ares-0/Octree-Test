@@ -17,18 +17,15 @@ public:
 
 	quadtree();
 	quadtree(int x0, int y0, int radius0);
+	quadtree(int x0, int y0, int rad, entity2D ent);
+	~quadtree();
 private:
-	quadtree* child0; // Northeast child
-	quadtree* child1; // Southeast child
-	quadtree* child2; // Southwest child
-	quadtree* child3; // Northwest child
 	std::vector<quadtree*> children;
 	entity2D* data;
+	bool leaf; // if leaf or not. iff true, data has value
 
 	int xpos, ypos; // coordinates
 	int radius; // size of square
-
-	bool leaf; // if leaf or not
 
 	int get_quadrant(entity2D);
 };

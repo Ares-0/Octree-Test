@@ -10,38 +10,50 @@
 
 using namespace std;
 
-
+// Completely blank constructor
 quadtree::quadtree()
 {
-	cout << "constructing new quadtree" << endl;
-	child0 = NULL;
-	child1 = NULL;
-	child2 = NULL;
-	child3 = NULL;
+	children = vector<quadtree*>(4);
+	data = NULL;
+	leaf = false;
 
 	xpos = 0;
 	ypos = 0;
 	radius = 0;
-
-	leaf = true;
 }
 
 quadtree::quadtree(int x0, int y0, int radius0)
 {
-	cout << "making a new quadtree with some initial values" << endl;
-	child0 = NULL;
-	child1 = NULL;
-	child2 = NULL;
-	child3 = NULL;
+	// cout << "making a new quadtree with some initial values" << endl;
+	children = vector<quadtree*>(4);
+	data = NULL;
+	leaf = false;
 
 	xpos = x0;
 	ypos = y0;
 	radius = radius0;
 
-	leaf = true;
 	// quadtree(); // can I pull the children and the leaf out and just call this?
 }
 
+// This constructor is used when creating a new leaf
+quadtree::quadtree(int x0, int y0, int rad, entity2D ent)
+{
+	children = vector<quadtree*>(4);
+	data = &ent;
+	leaf = true;
+
+	xpos = x0;
+	ypos = y0;
+	radius = rad;
+}
+
+quadtree::~quadtree()
+{
+	cout << "destroying!" << xpos << ypos << radius << endl;
+}
+
+// sanity check
 void quadtree::hello_world()
 {
 	cout << "Hello, world! Quadtree here" << endl;
@@ -56,27 +68,45 @@ bool quadtree::isleaf()
 // Rebalance tree if need be
 void quadtree::add_entity(entity2D ent)
 {
-	cout << ent.to_string() << endl;
+	// what if point already exists?
+	// cout << ent.to_string() << endl;
 
-	// figure out what child to potentially look at
+	// figure out in what quadrant the child should go
 	int quad = get_quadrant(ent);
-	void* quad_ptr = nullptr;
-	if (quad == 0)
-		quad_ptr = child0;
-	if (quad == 1)
-		quad_ptr = child1;
-	if (quad == 2)
-		quad_ptr = child2;
-	if (quad == 3)
-		quad_ptr = child3;
+	quadtree** quad_ptr = &children[quad]; // pointer to child pointer
 
 	// case 1: the entity goes in a spot that is currently empty
-	if (quad_ptr == nullptr)
+	if (*quad_ptr == nullptr)
 	{
-		quad_ptr = &ent;
+		// create a new tree aka leaf
+		// TODO: validate all this integer math. Its proobably close enough
+		int x_shift[] = { 1, 1, -1, -1 };
+		int dx = xpos + (radius / 2) * x_shift[quad];
+
+		int y_shift[] = { 1, -1, -1, 1 };
+		int dy = ypos + (radius / 2) * y_shift[quad];
+
+		quadtree new_leaf = quadtree(dx, dy, radius/2, ent);
+		*quad_ptr = &new_leaf;
+		return;
 	}
+
 	// case 2: the entity goes in a spot that has a child tree already
+	// aka points to subtree with leaf == false
+	if ((**quad_ptr).isleaf() == false)
+	{
+		// just move down the tree
+		(**quad_ptr).add_entity(ent);
+		return;
+	}
+	 
 	// case 3: the entity goes in a spot that has an entity already
+	// aka points to subtree with leaf == true
+	if ((**quad_ptr).isleaf() == true)
+	{
+		// need to make space
+	}
+	
 	return;
 }
 
@@ -131,22 +161,13 @@ std::string quadtree::to_string()
 	last = last + "leaf: " + std::to_string(leaf) + "\n";
 	last = last + "\nchildren:\n";
 	
-	if (child0 == NULL)
-		last = last + "NULL\n";
-	else
-		last = last + "leaf: " + std::to_string(((quadtree*)child0)->isleaf());
-	if (child1 == NULL)
-		last = last + "NULL\n";
-	else
-		last = last + "leaf: " + std::to_string(((quadtree*)child1)->isleaf());
-	if (child2 == NULL)
-		last = last + "NULL\n";
-	else
-		last = last + "leaf: " + std::to_string(((quadtree*)child2)->isleaf());
-	if (child3 == NULL)
-		last = last + "NULL\n";
-	else
-		last = last + "leaf: " + std::to_string(((quadtree*)child3)->isleaf());
+	for (int i = 0; i < 4; i++)
+	{
+		if (children[i] == NULL)
+			last = last + "NULL\n";
+		else
+			last = last + "leaf: " + std::to_string((children[i])->isleaf());
+	}
 
 	return last;
 }
@@ -160,5 +181,33 @@ std::string quadtree::to_string()
 // return: string, json formatted
 std::string quadtree::to_json()
 {
-	return "";
+	std::string last = "{";
+	last = last + "\"x\": " + std::to_string(xpos) + ",";
+	last = last + "\"y\": " + std::to_string(ypos) + ",";
+	last = last + "\"r\": " + std::to_string(radius) + ",";
+	last = last + "\"leaf\": ";
+	if (leaf)
+	{
+		last = last + "true,";
+		last = last + "\"data\": " + data->to_json() + ",";
+	}
+	else
+	{
+		last = last + "false,";
+		last = last + "\"data\": NULL,";
+	}
+	for (int i = 0; i < 4; i++) {
+		// recursive part
+		if (i >= children.size())
+		{
+			last = last + "\"child\": ERROR,";
+		}
+		else if (children[i] != nullptr)
+		{
+			last = last + (*children[i]).to_json();
+		}
+	}
+
+	std::string closers = "}\n";
+	return last + closers;
 }
