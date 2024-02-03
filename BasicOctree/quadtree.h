@@ -14,6 +14,8 @@ public:
 	std::string to_json();
 		
 	bool isleaf();
+	void set_data(entity2D ent);
+	entity2D* pop_data();
 
 	quadtree();
 	quadtree(int x0, int y0, int radius0);
@@ -28,4 +30,6 @@ private:
 	int radius; // size of square
 
 	int get_quadrant(entity2D);
+	quadtree* new_subtree(int quad);
+
 };

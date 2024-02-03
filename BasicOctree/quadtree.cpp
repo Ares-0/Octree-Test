@@ -81,14 +81,8 @@ void quadtree::add_entity(entity2D ent)
 	if (*quad_ptr == nullptr)
 	{
 		// create a new tree aka leaf
-		// TODO: validate all this integer math. Its proobably close enough
-		int x_shift[] = { 1, 1, -1, -1 };
-		int dx = xpos + (radius / 2) * x_shift[quad];
-
-		int y_shift[] = { 1, -1, -1, 1 };
-		int dy = ypos + (radius / 2) * y_shift[quad];
-
-		quadtree *new_leaf = new quadtree(dx, dy, radius/2, ent);
+		quadtree* new_leaf = new_subtree(quad);
+		new_leaf->set_data(ent);
 		*quad_ptr = new_leaf;
 		return;
 	}
@@ -104,12 +98,59 @@ void quadtree::add_entity(entity2D ent)
 	 
 	// case 3: the entity goes in a spot that has an entity already
 	// aka points to subtree with leaf == true
+	// need to make space
 	if ((**quad_ptr).isleaf() == true)
 	{
-		// need to make space
+		// pull olddata out of child (making it a non leaf node)
+		entity2D* old_ent = (**quad_ptr).pop_data();
+		
+		// add olddata to child (aka making a new leaf node)
+		(**quad_ptr).add_entity(*old_ent);
+		// I think I need to delete olddata now
+		 
+		// add newent to child (recursive)
+		(**quad_ptr).add_entity(ent);
 	}
 	
 	return;
+}
+
+// Does the work of creating a new quadtree that covers one of the four quadrants of this
+// no linking or anything is done, just returns the pointer to the object
+// also no data, fill that in elsewhere afterwards
+//
+// quad: int representing quad of new tree
+// return: new quadtree with correct coordinates
+quadtree* quadtree::new_subtree(int quad)
+{
+	// TODO: validate all this integer math. Its proobably close enough
+	int x_shift[] = { 1, 1, -1, -1 };
+	int dx = xpos + (radius / 2) * x_shift[quad];
+
+	int y_shift[] = { 1, -1, -1, 1 };
+	int dy = ypos + (radius / 2) * y_shift[quad];
+
+	quadtree* new_leaf = new quadtree(dx, dy, radius / 2);
+	return new_leaf;
+}
+
+void quadtree::set_data(entity2D ent)
+{
+	// error checking
+	// children should be empty
+	// ent should not be empty
+	data = ent.copy();
+	leaf = true; // is this ok here?
+}
+
+// Pull data out of this quadtree node
+// this is an internal function, not for other objects to use
+entity2D* quadtree::pop_data()
+{
+	entity2D* last = data;
+	data = nullptr;
+	leaf = false;
+	return last;
 }
 
 // Determine the quadrant in which an entity should belong

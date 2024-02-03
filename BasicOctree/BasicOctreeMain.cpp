@@ -18,20 +18,23 @@ int main()
     //tree.hello_world();
 
     //quadtree qtree;
-    quadtree qtree(5, 5, 5);
+    quadtree qtree(50, 50, 50);
     // qtree.hello_world();
 
-    entity2D alpha(8, 9, 2);
-    entity2D betah(7, 1, 2);
-    entity2D gamma(2, 1, 2);
-    entity2D delta(3, 6, 2);
+    entity2D alpha(80, 90, 2);
+    //entity2D betah(7, 1, 2);
+    //entity2D gamma(2, 1, 2);
+    //entity2D delta(3, 6, 2);
+    entity2D epsil(60, 70, 1);
     
     qtree.add_entity(alpha);
-    qtree.add_entity(betah);
-    qtree.add_entity(gamma);
-    qtree.add_entity(delta);
-
-    std::cout << qtree.to_json();
+    //qtree.add_entity(betah);
+    //qtree.add_entity(gamma);
+    //qtree.add_entity(delta);
+    std::cout << qtree.to_json() << std::endl;
+    
+    qtree.add_entity(epsil);
+    std::cout << qtree.to_json() << std::endl;
 
     std::cout << "\n\n\n\n";
 }
