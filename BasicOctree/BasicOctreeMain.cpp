@@ -8,17 +8,16 @@
 #include "entity2D.h"
 #include "ray.h"
 
+void batch_random_rays(quadtree* qtree, int count);
+bool random_ray(quadtree* qtree);
 void batch_add_random_ent(quadtree* qtree, int count);
 bool add_random_ent(quadtree *tree);
 
 int main()
 {
     std::cout << "Hello World!\n\n";
+    srand(static_cast <unsigned> (time(0)));
 
-    //octree tree;
-    //tree.hello_world();
-
-    //quadtree qtree;
     quadtree qtree(512, 512, 512); // 0 to 1024
     // theres some edge cases where small boxes can fail to correctly hold an object
     //   by having their children miss certain coordinates
@@ -26,29 +25,69 @@ int main()
     //   or drop the radius system for an extent system
     // sticking to multiples of 2 should kick the can for a bit
 
-    entity2D alpha(500, 500, 2);
-    //entity2D betah(128, 128, 2);
-    qtree.add_entity(alpha);
-    //bool last = qtree.add_entity(betah);
-    //if (not last)
-    //    std::cout << "failed to add " << betah.to_json() << " to tree..." << std::endl;
+    // Add one object
+    //entity2D alpha(500, 500, 2);
+    //qtree.add_entity(alpha);
 
-    // batch add
-    // batch_add_random_ent(&qtree, 500);
+    // TEST: two points super close together, this can still fail for some points
+    //entity2D alpha(500, 500, 2);
+    //entity2D betah(501, 500, 2);
+    //qtree.add_entity(alpha);
+    //qtree.add_entity(betah);
+    //std::cout << std::endl << qtree.to_json() << std::endl;
 
-    // std::cout << std::endl << qtree.to_json() << std::endl;
+    // TEST: force a ray to hit an object
+    // entity2D alpha(500, 500, 2);
+    // entity2D alpha(700, 700, 2); // or miss
+    //ray* gee = new ray(500, 500, -1000, 0, 0, 1);
+    //entity2D* last = gee->intersects_quadtree(&qtree);
+    //if (last != nullptr)
+    //   std::cout << last->to_string();
+ 
+    // Main test: batch add objects, shoot a bunch of rays, print the results
+    batch_add_random_ent(&qtree, 100000);
+    // std::cout << std::endl << qtree.to_json() << std::endl; // warning: big
+    batch_random_rays(&qtree, 1000); // 10k rays takes about 4 seconds
 
-    ray* ree = new ray();
-    ray* gee = new ray(500, 500, -1000, 0, 0, 1);
-
-    entity2D* last;
-    last = gee->intersects_quadtree(&qtree);
-    
     std::cout << "\n\n\n\n";
+}
+
+
+void batch_random_rays(quadtree* qtree, int count)
+{
+    std::cout << "Firing " << count << " rays...\n";
+    int misses = 0;
+    for (int i = 0; i < count; i++)
+    {
+        if (not random_ray(qtree))
+            misses = misses + 1;
+    }
+    std::cout << "\n" << misses << " rays hit nothing.\n";
+}
+
+bool random_ray(quadtree* qtree)
+{
+    int rx = rand() % 1000;
+    int ry = rand() % 1000;
+    float dx = (rand() % 100) - 5;
+    float dy = (rand() % 100) - 5;
+    // std::cout << dx << " " << dy << "\n";
+    ray* ree = new ray(rx, ry, -513, dx, dy, 10);
+    entity2D* last = ree->intersects_quadtree(qtree);
+    
+    if (last != NULL)
+    {
+        std::cout << "Ray " << ree->to_string() << " \thits: ";
+        std::cout << last->to_json() << std::endl;
+        return true;
+    }
+    else
+        return false;
 }
 
 void batch_add_random_ent(quadtree *qtree, int count)
 {
+    std::cout << "Adding " << count << " objects to tree...\n";
     int fails = 0;
     bool last = true;
     for (int i = 0; i < count; i++)
@@ -57,7 +96,7 @@ void batch_add_random_ent(quadtree *qtree, int count)
         if (not last)
             fails = fails + 1;
     }
-    std::cout << "Failed to add " << fails << " objects." << std::endl;
+    std::cout << "Failed to add " << fails << " objects.\n\n";
 }
 
 bool add_random_ent(quadtree *qtree)
@@ -65,22 +104,11 @@ bool add_random_ent(quadtree *qtree)
     int rx = rand() % 1000;
     int ry = rand() % 1000;
     entity2D* ent = new entity2D(rx, ry, 1);
-    std::cout << "adding " << ent->to_json() << " to tree..." << std::endl;
+    // std::cout << "adding " << ent->to_json() << " to tree..." << std::endl;
     bool last = qtree->add_entity(*ent);
     if (not last)
     {
-        std::cout << "failed to add " << ent->to_json() << " to tree..." << std::endl;
+        std::cout << "failed to add " << ent->to_json() << " to tree...\n";
     }
     return last;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

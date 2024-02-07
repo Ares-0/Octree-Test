@@ -1,7 +1,6 @@
 // ray.h
-// 2D to start, 3D later
-// Ill keep all the math in here to start, not sure where it 'should' go
 #pragma once
+#include <string>
 #include <vector>
 #include "quadtree.h"
 
@@ -15,4 +14,5 @@ public:
 
 	entity2D* intersects_quadtree(quadtree* qtree);
 	bool intersects_plane(quadtree* qtree, std::vector<float> plane_origin, std::vector<float> plane_normal);
+	std::string to_string();
 };

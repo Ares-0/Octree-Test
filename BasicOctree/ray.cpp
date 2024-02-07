@@ -1,4 +1,6 @@
 // ray.cpp
+// logic to represent a ray moving through a tree and potentially intersects with trees and entities
+// This IS all 3D already
 #include <iostream>
 #include <numeric>
 #include <vector>
@@ -16,10 +18,16 @@ ray::ray()
 ray::ray(float o_x, float o_y, float o_z, float v_x, float v_y, float v_z)
 {
 	origin = { o_x, o_y, o_z };
-	float length = v_x * v_x + v_y * v_y + v_z * v_z;
+	float length = v_x * v_x + v_y * v_y + v_z * v_z; // Normalize right away
 	direction = { v_x/length, v_y/length, v_z/length };
 }
 
+// Determine if this intersects with given tree
+// This only checks for tree intersection, then returns entities
+//   which can be checked externally against the ray for specific tri intersections
+//
+// qtree: tree to test against
+// return: entity2D, potentially intersected entity or NULL if none found
 entity2D* ray::intersects_quadtree(quadtree* qtree)
 {
 	if (qtree == NULL)
@@ -49,6 +57,7 @@ entity2D* ray::intersects_quadtree(quadtree* qtree)
 		};
 		if (intersects_plane(qtree, plane_origin, plane_normal))
 		{
+			// intersecting a single plane is enough
 			intersects = true;
 			break;
 		}
@@ -64,7 +73,7 @@ entity2D* ray::intersects_quadtree(quadtree* qtree)
 	// should be smarter about the order I search children, closest to plane first?
 	if (not qtree->isleaf())
 	{
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++) // change to 8 for octree
 		{
 			quadtree* next = qtree->get_child(i);
 			if (next == NULL)
@@ -75,9 +84,8 @@ entity2D* ray::intersects_quadtree(quadtree* qtree)
 		}
 		return NULL;
 	}
-		
 
-	// if leaf and in range, intersects (well, then you check the actual mesh I suppose)
+	// if leaf and in range, intersect confirmed
 	if (qtree->isleaf())
 		return qtree->get_data();
 
@@ -88,11 +96,11 @@ entity2D* ray::intersects_quadtree(quadtree* qtree)
 // Done by first calculating where the ray crosses the infinite plane,
 // then if intersection point exists in the actual extent of the qtrees side
 // This should technically expect normalized vectors to be passed in but
-//   practically for now its easier to convert here than on the generation side
+//   practically for now its easy enough to convert just in case
 // 
 // qtree, owner of the plane
 // plane_origin, center of plane in 3d space
-// plane normal, defining normal of plane in 3d space
+// plane_normal_raw, defining normal of plane in 3d space
 // return: bool, true if intersects, false if not
 bool ray::intersects_plane(quadtree* qtree, vector<float> plane_origin, vector<float> plane_normal_raw)
 {
@@ -131,7 +139,7 @@ bool ray::intersects_plane(quadtree* qtree, vector<float> plane_origin, vector<f
 		origin[1] + direction[1] * t,
 		origin[2] + direction[2] * t
 	};
-	cout << "intersects at p=" << point[0] << " " << point[1] << " " << point[2] << endl;
+	// cout << "intersects at p=" << point[0] << " " << point[1] << " " << point[2] << endl;
 
 	// check if p is actually in range of plane
 	// as long as the point is on the plane (given), simply checking all 3 dimensions are less than tree.radius from the plane origin 
@@ -145,4 +153,11 @@ bool ray::intersects_plane(quadtree* qtree, vector<float> plane_origin, vector<f
 	}
 
 	return false;
+}
+
+std::string ray::to_string()
+{
+	string last = "P0: (" + std::to_string(origin[0]) + "," + std::to_string(origin[1]) + "," + std::to_string(origin[2]) + ")\t";
+	last = last + "V: (" + std::to_string(direction[0]) + "," + std::to_string(direction[0]) + "," + std::to_string(direction[0]) + ")";
+	return last;
 }

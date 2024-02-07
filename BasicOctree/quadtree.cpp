@@ -41,7 +41,7 @@ quadtree::quadtree(int x0, int y0, int rad, entity2D ent)
 {
 	// std::vector<quadtree*>* children = new vector<quadtree*>(4);
 	children = vector<quadtree*>(4);
-	data = ent.copy();
+	data = ent.copy(); // aaa this should be a pointer
 	leaf = true;
 
 	xpos = x0;
@@ -52,7 +52,7 @@ quadtree::quadtree(int x0, int y0, int rad, entity2D ent)
 quadtree::~quadtree()
 {
 	// TODO: free data
-	cout << "destroying!" << xpos << ypos << radius << endl;
+	//cout << "destroying!" << xpos << ypos << radius << endl;
 }
 
 // sanity check
@@ -87,8 +87,9 @@ quadtree* quadtree::get_child(int num)
 }
 
 // Add an entity to the tree where appropriate
-// Rebalance tree if need be
+// Rebalance tree if need be // actually can quadtrees be rebalanced? Or is their layout deterministic?
 // 
+// ent: entity to add to the tree
 // return: bool indicating success
 bool quadtree::add_entity(entity2D ent)
 {
@@ -126,14 +127,14 @@ bool quadtree::add_entity(entity2D ent)
 		if ((*quad_ptr)->data->xpos == ent.xpos && (*quad_ptr)->data->ypos == ent.ypos)
 			return false;
 
-		// pull olddata out of child (making it a non leaf node)
+		// pull old data out of child (making it a non leaf node)
 		entity2D* old_ent = (**quad_ptr).pop_data();
 
-		// add olddata to child (aka making a new leaf node)
+		// add old data to child (aka making a new leaf node)
 		(**quad_ptr).add_entity(*old_ent);
-		// I think I need to delete olddata now
+		// I think I need to delete old data now // no, I should make data a pointer instead, none of this copy business
 
-		// add newent to child (recursive)
+		// add new ent to child (recursive)
 		return (**quad_ptr).add_entity(ent);
 	}
 
@@ -148,12 +149,15 @@ bool quadtree::add_entity(entity2D ent)
 // return: new quadtree with correct coordinates or null if error
 quadtree* quadtree::new_subtree(int quad)
 {
+	// this function needs a fair number of changes to work in 3d
+
 	// until I can make a system that can handle this, radius 1 quads cannot be split
 	// update radius 1 quads CAN be split, but they HAVE to be leaves
 	if (radius <= 0)
 	{
 		return nullptr;
 	}
+
 	// TODO: validate all this integer math. Its proobably close enough
 	// update it was NOT close enough
 	int x_shift[] = { 1, 1, -1, -1 };
@@ -163,7 +167,6 @@ quadtree* quadtree::new_subtree(int quad)
 	int dy = ypos + round(radius / 2) * y_shift[quad];
 
 	quadtree* new_leaf = new quadtree(dx, dy, radius / 2);
-	// cout << "making new leaf at " << dx << ", " << dy << ", " << (radius / 2) << endl;
 	return new_leaf;
 }
 
@@ -180,6 +183,8 @@ void quadtree::set_data(entity2D ent)
 
 // Pull data out of this quadtree node
 // this is an internal function, not for other objects to use
+//
+// return: entity2D, the data removed from the tree
 entity2D* quadtree::pop_data()
 {
 	entity2D* last = data;
