@@ -130,15 +130,15 @@
   <ItemGroup>
     <ClCompile Include="BasicOctreeMain.cpp" />
     <ClCompile Include="entity2D.cpp" />
-    <ClCompile Include="my_class.cpp" />
     <ClCompile Include="octree.cpp" />
     <ClCompile Include="quadtree.cpp" />
+    <ClCompile Include="ray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="entity2D.h" />
-    <ClInclude Include="my_class.h" />
     <ClInclude Include="octree.h" />
     <ClInclude Include="quadtree.h" />
+    <ClInclude Include="ray.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

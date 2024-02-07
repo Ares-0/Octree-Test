@@ -21,13 +21,13 @@
     <ClCompile Include="octree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="my_class.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="quadtree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="entity2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,13 +35,13 @@
     <ClInclude Include="octree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="my_class.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="quadtree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="entity2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

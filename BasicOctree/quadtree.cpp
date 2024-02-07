@@ -66,6 +66,11 @@ bool quadtree::isleaf()
 	return leaf;
 }
 
+int quadtree::get_radius()
+{
+	return radius;
+}
+
 // Add an entity to the tree where appropriate
 // Rebalance tree if need be
 // 
@@ -96,29 +101,27 @@ bool quadtree::add_entity(entity2D ent)
 		(**quad_ptr).add_entity(ent);
 		return true;
 	}
-	 
+
 	// case 3: the entity goes in a spot that has an entity already
 	// aka points to subtree with leaf == true
 	// need to make space
 	if ((**quad_ptr).isleaf() == true)
 	{
-		// TODO: check if colliding entities are in the same position
-		// what if point already exists?
 		// For now I'm sticking with two objects cant exist in exactly the same point
 		if ((*quad_ptr)->data->xpos == ent.xpos && (*quad_ptr)->data->ypos == ent.ypos)
 			return false;
-		
+
 		// pull olddata out of child (making it a non leaf node)
 		entity2D* old_ent = (**quad_ptr).pop_data();
-		
+
 		// add olddata to child (aka making a new leaf node)
 		(**quad_ptr).add_entity(*old_ent);
 		// I think I need to delete olddata now
-		 
+
 		// add newent to child (recursive)
 		return (**quad_ptr).add_entity(ent);
 	}
-	
+
 	return false;
 }
 
@@ -151,9 +154,11 @@ quadtree* quadtree::new_subtree(int quad)
 
 void quadtree::set_data(entity2D ent)
 {
-	// error checking
-	// children should be empty
-	// ent should not be empty
+	// TODO: error checking
+	//   children should be empty
+	//   ent should not be empty
+
+	// work
 	data = ent.copy();
 	leaf = true; // is this ok here?
 }

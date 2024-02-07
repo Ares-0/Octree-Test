@@ -14,6 +14,7 @@ public:
 	std::string to_json();
 		
 	bool isleaf();
+	int get_radius();
 	void set_data(entity2D ent);
 	entity2D* pop_data();
 

@@ -2,10 +2,11 @@
 //
 
 #include <iostream>
-#include "my_class.h"
+#include <vector>
 #include "octree.h"
 #include "quadtree.h"
 #include "entity2D.h"
+#include "ray.h"
 
 void batch_add_random_ent(quadtree* qtree, int count);
 bool add_random_ent(quadtree *tree);
@@ -13,9 +14,6 @@ bool add_random_ent(quadtree *tree);
 int main()
 {
     std::cout << "Hello World!\n\n";
-    
-    // my_class mc;
-    // mc.do_something();
 
     //octree tree;
     //tree.hello_world();
@@ -40,6 +38,14 @@ int main()
 
     // std::cout << std::endl << qtree.to_json() << std::endl;
 
+    ray* ree = new ray();
+    ray* gee = new ray(0, 520, 0, 1, 0, 0);
+
+    // intersects_plane(quadtree * qtree, vector<int> plane_origin, vector<int> plane_normal)
+    std::vector<float> plane_o = { 10, 0, 0 };
+    std::vector<float> plane_n = { 1, 0, 0 };
+    bool last = gee->intersects_plane(&qtree, plane_o, plane_n);
+    std::cout << last;
     std::cout << "\n\n\n\n";
 }
 
