@@ -72,9 +72,6 @@ bool quadtree::isleaf()
 // return: bool indicating success
 bool quadtree::add_entity(entity2D ent)
 {
-	// what if point already exists?
-    // cout << "adding " << ent.to_json() << " to tree..." << endl;
-
 	// figure out in what quadrant the child should go
 	int quad = get_quadrant(ent);
 	quadtree** quad_ptr = &children[quad]; // pointer to child pointer
@@ -105,6 +102,12 @@ bool quadtree::add_entity(entity2D ent)
 	// need to make space
 	if ((**quad_ptr).isleaf() == true)
 	{
+		// TODO: check if colliding entities are in the same position
+		// what if point already exists?
+		// For now I'm sticking with two objects cant exist in exactly the same point
+		if ((*quad_ptr)->data->xpos == ent.xpos && (*quad_ptr)->data->ypos == ent.ypos)
+			return false;
+		
 		// pull olddata out of child (making it a non leaf node)
 		entity2D* old_ent = (**quad_ptr).pop_data();
 		
