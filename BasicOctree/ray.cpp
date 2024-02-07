@@ -20,16 +20,68 @@ ray::ray(float o_x, float o_y, float o_z, float v_x, float v_y, float v_z)
 	direction = { v_x/length, v_y/length, v_z/length };
 }
 
-bool ray::intersects_quadtree(quadtree* qtree)
+entity2D* ray::intersects_quadtree(quadtree* qtree)
 {
-	// if not in range of tree, no intersection
-	return false;
+	if (qtree == NULL)
+		return NULL;
+
+	// if not in range of tree, no intersection	
+	// check all 6 planes for intersections (can this be reduced? Only check planes that have negative dot product?)
+	vector<vector<float>> unit_normals = {
+		{0.0, 0.0, 1.0},
+		{0.0, 0.0, -1.0},
+		{0.0, 1.0, 0.0},
+		{0.0, -1.0, 0.0},
+		{1.0, 0.0, 0.0},
+		{-1.0, 0.0, 0.0},
+	};
+	vector<float> plane_origin;
+	vector<float> plane_normal;
+	bool intersects = false;
+	for (int i = 0; i < 6; i++)
+	{
+		plane_normal = unit_normals[i];
+		vector<int> tree_pos = qtree->get_origin();
+		float tree_rad = static_cast<float>(qtree->get_radius());
+		plane_origin = { tree_pos[0] + unit_normals[i][0] * tree_rad ,
+			tree_pos[1] + unit_normals[i][1] * tree_rad,
+			tree_pos[2] + unit_normals[i][2] * tree_rad
+		};
+		if (intersects_plane(qtree, plane_origin, plane_normal))
+		{
+			intersects = true;
+			break;
+		}
+
+	}
 	
+	// If not in range, quit out
+	if (not intersects)
+		return NULL;
+
 	// If not leaf and in range, check children
-	// probably not all long term, prob just the ones on the side of the intersected plane?
+	// if a ray can theoretically hit two objects, how do I determine which one to return?
+	// should be smarter about the order I search children, closest to plane first?
+	if (not qtree->isleaf())
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			quadtree* next = qtree->get_child(i);
+			if (next == NULL)
+				continue;
+			entity2D* last = intersects_quadtree(next);
+			if (last != nullptr)
+				return last;
+		}
+		return NULL;
+	}
+		
 
 	// if leaf and in range, intersects (well, then you check the actual mesh I suppose)
-	
+	if (qtree->isleaf())
+		return qtree->get_data();
+
+	return NULL;
 }
 
 // Do math to see if this ray intersects with a given plane
@@ -64,10 +116,11 @@ bool ray::intersects_plane(quadtree* qtree, vector<float> plane_origin, vector<f
 
 	// if lower is too small, ray and plane are probably parallel (and not intersecting)
 	// can tell the difference later
-	if (lower < 0.0001) // mess with this value
+	if (abs(lower) < 0.0001) // mess with this value
 		return false;
 
 	t = upper / lower;
+	// cout << "intersects at t=" << t << endl;
 	if (t < 0)
 		return false;
 
@@ -78,6 +131,7 @@ bool ray::intersects_plane(quadtree* qtree, vector<float> plane_origin, vector<f
 		origin[1] + direction[1] * t,
 		origin[2] + direction[2] * t
 	};
+	cout << "intersects at p=" << point[0] << " " << point[1] << " " << point[2] << endl;
 
 	// check if p is actually in range of plane
 	// as long as the point is on the plane (given), simply checking all 3 dimensions are less than tree.radius from the plane origin 

@@ -71,6 +71,21 @@ int quadtree::get_radius()
 	return radius;
 }
 
+std::vector<int> quadtree::get_origin()
+{
+	return std::vector<int> {xpos, ypos, 0};
+}
+
+entity2D* quadtree::get_data()
+{
+	return data;
+}
+
+quadtree* quadtree::get_child(int num)
+{
+	return children[num];
+}
+
 // Add an entity to the tree where appropriate
 // Rebalance tree if need be
 // 

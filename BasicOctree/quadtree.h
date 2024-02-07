@@ -15,6 +15,10 @@ public:
 		
 	bool isleaf();
 	int get_radius();
+	std::vector<int> get_origin();
+	entity2D* get_data();
+	quadtree* get_child(int num);
+
 	void set_data(entity2D ent);
 	entity2D* pop_data();
 

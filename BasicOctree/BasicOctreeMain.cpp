@@ -26,9 +26,9 @@ int main()
     //   or drop the radius system for an extent system
     // sticking to multiples of 2 should kick the can for a bit
 
-    //entity2D alpha(128, 128, 2);
+    entity2D alpha(500, 500, 2);
     //entity2D betah(128, 128, 2);
-    //qtree.add_entity(alpha);
+    qtree.add_entity(alpha);
     //bool last = qtree.add_entity(betah);
     //if (not last)
     //    std::cout << "failed to add " << betah.to_json() << " to tree..." << std::endl;
@@ -39,13 +39,11 @@ int main()
     // std::cout << std::endl << qtree.to_json() << std::endl;
 
     ray* ree = new ray();
-    ray* gee = new ray(0, 520, 0, 1, 0, 0);
+    ray* gee = new ray(500, 500, -1000, 0, 0, 1);
 
-    // intersects_plane(quadtree * qtree, vector<int> plane_origin, vector<int> plane_normal)
-    std::vector<float> plane_o = { 10, 0, 0 };
-    std::vector<float> plane_n = { 1, 0, 0 };
-    bool last = gee->intersects_plane(&qtree, plane_o, plane_n);
-    std::cout << last;
+    entity2D* last;
+    last = gee->intersects_quadtree(&qtree);
+    
     std::cout << "\n\n\n\n";
 }
 
